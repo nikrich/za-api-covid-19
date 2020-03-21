@@ -28,6 +28,7 @@ namespace Covid19
             
             services.AddTransient<ICasesService, CasesService>();
             services.AddTransient<ITestsService, TestsService>();
+            services.AddTransient<IDeathsService, DeathsService>();
 
             services.AddHttpClient("CovidClient", c =>
             {

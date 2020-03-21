@@ -24,7 +24,7 @@ namespace Covid19.Controllers
 
         [HttpGet]
         [Route("getall")]
-        public async Task<ActionResult<List<CaseModel>>> GetAll()
+        public async Task<ActionResult<List<TestsModel>>> GetAll()
         {
             var result = await _testsService.GetAll();
             return Ok(result);

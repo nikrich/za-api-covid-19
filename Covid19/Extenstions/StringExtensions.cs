@@ -56,6 +56,47 @@ namespace Covid19.Extenstions
             return models;
         }
 
+        public static DeathsModel MapDeath(this string data)
+        {
+            var items = data.Split(",");
+
+            if (items.Count() < 8)
+                return default;
+
+            return new DeathsModel
+            {
+                CaseId = items.Count() > 0 && int.TryParse(items[0], out int id) ? id : 0,
+                Date = items.Count() > 1 ? DateTime.ParseExact(items[1], "dd-MM-yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue,
+                DatePlain = items.Count() > 2 ? items[2] : string.Empty
+            };
+        }
+
+        public static List<DeathsModel> MapDeathsList(this string data)
+        {
+            var lines = data.Split("\n");
+
+            if (lines.Count() == 0)
+                return default;
+
+            var models = new List<DeathsModel>();
+
+            var index = 0;
+            foreach (var line in lines)
+            {
+                // Skip the First one as it's the headings
+                if (index != 0)
+                {
+                    var item = line.MapDeath();
+                    if (item != null)
+                        models.Add(item);
+                }
+
+                index++;
+            }
+
+            return models;
+        }
+
         public static TestsModel MapTests(this string data)
         {
             var items = data.Split(",");
