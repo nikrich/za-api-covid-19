@@ -18,15 +18,15 @@ namespace Covid19.Extenstions
 
             return new CaseModel
             {
-                CaseId = items.Count() > 0 && int.TryParse(items[0], out int id) ? id : 0,
-                Date = items.Count() > 1 ? DateTime.ParseExact(items[1], "dd-MM-yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue,
-                DatePlain = items.Count() > 2 ? items[2] : string.Empty,
-                Country = items.Count() > 3 ? items[3] : string.Empty,
-                Province = items.Count() > 4 ? items[4] : string.Empty,
-                GeoSubdivisions = items.Count() > 5 ? items[5] : string.Empty,
-                Age = items.Count() > 6 && int.TryParse(items[6], out int age) ? age : 0,
-                Gender = items.Count() > 7 ? items[7] : string.Empty,
-                TransmissionType = items.Count() > 8 ? items[8] : string.Empty,
+                CaseId = int.TryParse(items[0], out int id) ? id : 0,
+                Date = DateTime.ParseExact(items[1], "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                DatePlain = items[2],
+                Country = items[3],
+                Province = items[4],
+                GeoSubdivisions = items[5],
+                Age = int.TryParse(items[6], out int age) ? age : 0,
+                Gender = items[7],
+                TransmissionType = items[8],
             };
         }
 
@@ -65,9 +65,9 @@ namespace Covid19.Extenstions
 
             return new DeathsModel
             {
-                CaseId = items.Count() > 0 && int.TryParse(items[0], out int id) ? id : 0,
-                Date = items.Count() > 1 ? DateTime.ParseExact(items[1], "dd-MM-yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue,
-                DatePlain = items.Count() > 2 ? items[2] : string.Empty
+                CaseId = int.TryParse(items[0], out int id) ? id : 0,
+                Date = DateTime.ParseExact(items[1], "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                DatePlain = items[2]
             };
         }
 
@@ -106,12 +106,12 @@ namespace Covid19.Extenstions
 
             return new TestsModel
             {
-                Date = items.Count() > 0 ? DateTime.ParseExact(items[0], "dd-MM-yyyy", CultureInfo.InvariantCulture) : DateTime.MinValue,
-                DatePlain = items.Count() > 1 ? items[1] : string.Empty,
-                CmulativeTests = items.Count() > 2 && int.TryParse(items[2], out int c) ? c : 0,
-                ScannedTravellers = items.Count() > 3 && int.TryParse(items[3], out int s) ? s : 0,
-                PassengersElevatedTemperature = items.Count() > 4 && int.TryParse(items[4], out int p) ? p : 0,
-                CovidSuspectedCriteria = items.Count() > 5 && int.TryParse(items[5], out int co) ? co : 0,
+                Date = DateTime.ParseExact(items[0], "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                DatePlain = items[1],
+                CmulativeTests = int.TryParse(items[2], out int c) ? c : 0,
+                ScannedTravellers = int.TryParse(items[3], out int s) ? s : 0,
+                PassengersElevatedTemperature = int.TryParse(items[4], out int p) ? p : 0,
+                CovidSuspectedCriteria = int.TryParse(items[5], out int co) ? co : 0,
             };
         }
 
@@ -135,6 +135,96 @@ namespace Covid19.Extenstions
                         models.Add(item);
                 }
                     
+
+                index++;
+            }
+
+            return models;
+        }
+
+        public static HospitalsPublicModel MapHospitalsPublic(this string data)
+        {
+            var items = data.Split(",");
+
+            if (items.Count() < 7)
+                return default;
+
+            return new HospitalsPublicModel
+            {
+                Name = items[0],
+                Long = items[1],
+                Lat = items[2],
+                Category = items[3],
+                Province = items[4], 
+                District = items[5],
+                SubDistrict = items[6]
+            };
+        }
+
+        public static List<HospitalsPublicModel> MapHospitalsPublicList(this string data)
+        {
+            var lines = data.Split("\n");
+
+            if (lines.Count() == 0)
+                return default;
+
+            var models = new List<HospitalsPublicModel>();
+
+            var index = 0;
+            foreach (var line in lines)
+            {
+                // Skip the First one as it's the headings
+                if (index != 0)
+                {
+                    var item = line.MapHospitalsPublic();
+                    if (item != null)
+                        models.Add(item);
+                }
+
+
+                index++;
+            }
+
+            return models;
+        }
+
+        public static HospitalsPrivateModel MapHospitalsPrivate(this string data)
+        {
+            var items = data.Split(",");
+
+            if (items.Count() < 4)
+                return default;
+
+            return new HospitalsPrivateModel
+            {
+                Id = int.TryParse(items[0], out int i) ? i : 0,
+                HospitalName = items[1],
+                Long = items[2],
+                Lat = items[3],             
+                Province = items[4]
+            };
+        }
+
+        public static List<HospitalsPrivateModel> MapHospitalsPrivateList(this string data)
+        {
+            var lines = data.Split("\n");
+
+            if (lines.Count() == 0)
+                return default;
+
+            var models = new List<HospitalsPrivateModel>();
+
+            var index = 0;
+            foreach (var line in lines)
+            {
+                // Skip the First one as it's the headings
+                if (index != 0)
+                {
+                    var item = line.MapHospitalsPrivate();
+                    if (item != null)
+                        models.Add(item);
+                }
+
 
                 index++;
             }

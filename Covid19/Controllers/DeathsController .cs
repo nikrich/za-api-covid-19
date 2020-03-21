@@ -32,7 +32,7 @@ namespace Covid19.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
-        public async Task<ActionResult<List<DeathsModel>>> Get(int id)
+        public async Task<ActionResult<DeathsModel>> Get(int id)
         {
             var result = await _deathsService.GetById(id);
             return Ok(result);
