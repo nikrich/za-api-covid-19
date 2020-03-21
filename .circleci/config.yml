@@ -12,5 +12,5 @@ jobs:
      # deploy the image
      - run: |         
          docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
-         heroku container:push web -a $APP_NAME
+         heroku container:push web -a $HEROKU_APP_NAME
          heroku container:release web -a $HEROKU_APP_NAME
