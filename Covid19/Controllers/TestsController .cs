@@ -10,7 +10,8 @@ using Microsoft.Extensions.Logging;
 namespace Covid19.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
     public class TestsController : ControllerBase
     {
         private readonly ITestsService _testsService;
