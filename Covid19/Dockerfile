@@ -1,16 +1,18 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build-env
+# Stage 1 - Restoring & Compiling
+FROM microsoft/dotnet:2.2-sdk-alpine3.8 as builder
+WORKDIR /source
+COPY *.csproj .
+RUN dotnet restore
+COPY . .
+RUN dotnet publish -c Release -o /app/
+
+# Stage 2 - Creating Image for compiled app
+FROM microsoft/dotnet:2.2-aspnetcore-runtime-alpine3.8 as baseimage
+RUN apk add --update nodejs nodejs-npm
 WORKDIR /app
+COPY --from=builder /app .
+ENV ASPNETCORE_URLS=http://+:8080
 
-# Copy csproj and restore as distinct layers
-COPY ["Covid19/Covid19.csproj", "Covid19/"]
-RUN dotnet restore "Covid19/Covid19.csproj"
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
-WORKDIR /app
-COPY --from=build-env /app/out .
-CMD SPNETCORE_URLS=http://*:$PORT dotnet Covid19.dll
+# Run the application. REPLACE the name of dll with the name of the dll produced by your application
+EXPOSE 8080
+CMD ["dotnet", "Covid19.dll"]
