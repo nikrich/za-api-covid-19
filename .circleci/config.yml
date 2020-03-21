@@ -15,5 +15,4 @@ jobs:
          docker tag aspnetapp registry.heroku.com/$HEROKU_APP_NAME/web
          docker push registry.heroku.com/$HEROKU_APP_NAME/web                
          curl https://cli-assets.heroku.com/install.sh | sh
-         curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin -Channel 3.0
          heroku container:release web -a $HEROKU_APP_NAME
