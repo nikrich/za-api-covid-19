@@ -13,4 +13,4 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-CMD dotnet Covid19.dll
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Covid19.dll
