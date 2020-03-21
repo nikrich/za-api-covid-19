@@ -1,23 +1,16 @@
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-nanoserver-sac2016 AS base
+FROM microsoft/dotnet:3.1-sdk AS build-env
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-sac2016 AS build
-WORKDIR /src
-COPY ["Covid19/Covid19.csproj", "Covid19/"]
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
 RUN dotnet restore "Covid19/Covid19.csproj"
-COPY . .
-WORKDIR "/src/Covid19"
-RUN dotnet build "Covid19.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "Covid19.csproj" -c Release -o /app/publish
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+# Build runtime image
+FROM microsoft/dotnet:3.1-aspnetcore-runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Covid19.dll"]
+COPY --from=build-env /app/out .
+CMD dotnet Covid19.dll
