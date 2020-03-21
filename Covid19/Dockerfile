@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
+COPY ["Covid19/Covid19.csproj", "Covid19/"]
 RUN dotnet restore "Covid19/Covid19.csproj"
 
 # Copy everything else and build
