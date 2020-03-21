@@ -27,6 +27,8 @@ namespace Covid19
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
             services.AddTransient<ICasesService, CasesService>();
+            services.AddTransient<ITestsService, TestsService>();
+
             services.AddHttpClient("CovidClient", c =>
             {
                 c.BaseAddress = new Uri("https://raw.githubusercontent.com/");
