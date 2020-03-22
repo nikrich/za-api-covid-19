@@ -3,6 +3,7 @@ using Covid19.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -22,15 +23,26 @@ namespace Covid19
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigin",
+                builder => builder.AllowAnyOrigin().AllowAnyMethod());
+            });
+
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("AllowMyOrigin"));
+            });
+
             services.AddTransient<ICasesService, CasesService>();
             services.AddTransient<ITestsService, TestsService>();
             services.AddTransient<IDeathsService, DeathsService>();
             services.AddTransient<IHospitalsPublicService, HospitalsPublicService>();
-            services.AddTransient<IHospitalsPrivateService, HospitalsPrivateService>();
+            services.AddTransient<IHospitalsPrivateService, HospitalsPrivateService>();            
 
             services.AddHttpClient("CovidClient", c =>
             {
@@ -50,6 +62,7 @@ namespace Covid19
         {
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
+            app.UseCors("AllowMyOrigin");
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.

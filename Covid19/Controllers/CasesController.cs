@@ -25,10 +25,37 @@ namespace Covid19.Controllers
 
         [HttpGet]
         [Route("getall")]
-        public async Task<ActionResult<List<CaseModel>>> GetAll()
+        public async Task<ActionResult<List<CaseModel>>> GetAll([FromQuery]string province)
         {
-            var result = await _casesService.GetAll();
+            List<CaseModel> result = new List<CaseModel>();
+
+            if(string.IsNullOrWhiteSpace(province)) 
+                result = await _casesService.GetAll();
+            else
+                result = await _casesService.GetAllForProvince(province);
+
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("getallperday")]
+        public async Task<ActionResult<List<CaseCountModel>>> GetAllPerDay([FromQuery]string province)
+        {
+            List<CaseModel> result = new List<CaseModel>();
+
+            if (string.IsNullOrWhiteSpace(province))
+                result = await _casesService.GetAll();
+            else
+                result = await _casesService.GetAllForProvince(province);
+
+            var groupedResult = result.GroupBy(x => x.Date)
+                .Select(x => new CaseCountModel
+                {
+                    CasesTotal = x.Count(),
+                    Date = x.Key
+                });
+
+            return Ok(groupedResult);
         }
 
         [HttpGet]
@@ -37,6 +64,24 @@ namespace Covid19.Controllers
         {
             var result = await _casesService.GetById(id);
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("getcount")]
+        public async Task<ActionResult<CaseCountModel>> GetTotal([FromQuery]string province)
+        {
+            List<CaseModel> result = new List<CaseModel>();
+
+            if (string.IsNullOrWhiteSpace(province))
+                result = await _casesService.GetAll();
+            else
+                result = await _casesService.GetAllForProvince(province);
+           
+
+            if (result == null)
+                return Ok(new CaseCountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
+
+            return Ok(new CaseCountModel { CasesTotal = result.Count, Date = DateTime.Now });
         }
     }
 }

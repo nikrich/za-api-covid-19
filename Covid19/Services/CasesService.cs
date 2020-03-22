@@ -35,6 +35,16 @@ namespace Covid19.Services
             return result.MapCaseList();
         }
 
+        public async Task<List<CaseModel>> GetAllForProvince(string province)
+        {
+            var cases = await GetAll();
+
+            if (cases == null)
+                return default;
+
+            return cases.Where(x => x.Province.Equals(province, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        }
+
         public async Task<CaseModel> GetById(int caseId)
         {
             var cases = await GetAll();
