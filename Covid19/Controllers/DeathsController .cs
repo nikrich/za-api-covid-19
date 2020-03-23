@@ -11,7 +11,7 @@ namespace Covid19.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
+    [ResponseCache(Duration = 1800, Location = ResponseCacheLocation.Any)]
     public class DeathsController : ControllerBase
     {
         private readonly IDeathsService _deathsService;
@@ -37,6 +37,18 @@ namespace Covid19.Controllers
         {
             var result = await _deathsService.GetById(id);
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("getcount")]
+        public async Task<ActionResult<DeathsModel>> GetTotal()
+        {
+            var result = await _deathsService.GetAll();
+
+            if (result == null)
+                return Ok(new CountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
+
+            return Ok(new CountModel { CasesTotal = result.Count, Date = DateTime.Now });
         }
     }
 }

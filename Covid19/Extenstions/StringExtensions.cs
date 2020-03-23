@@ -9,6 +9,55 @@ namespace Covid19.Extenstions
 {
     public static class StringExtensions
     {
+        public static CumulativeModel MapCumulative(this string data)
+        {
+            var items = data.Split(",");
+
+            if (items.Count() < 10)
+                return default;
+
+            return new CumulativeModel
+            {              
+                Date = DateTime.ParseExact(items[0], "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                DatePlain = items[1],               
+                EasternCape = int.TryParse(items[2], out int ec) ? ec : 0,
+                FreeState = int.TryParse(items[3], out int fs) ? fs : 0,
+                Gauteng = int.TryParse(items[4], out int gp) ? gp : 0,
+                KwazuluNatal = int.TryParse(items[5], out int kzn) ? kzn : 0,
+                Limpopo = int.TryParse(items[6], out int lp) ? lp : 0,
+                Mpumalanga = int.TryParse(items[7], out int mp) ? mp : 0,
+                NorthernCape = int.TryParse(items[8], out int nc) ? nc : 0,
+                NorthWest = int.TryParse(items[9], out int nw) ? nw : 0,
+                WesternCape = int.TryParse(items[10], out int wc) ? wc : 0
+            };
+        }
+
+        public static List<CumulativeModel> MapCumulativeList(this string data)
+        {
+            var lines = data.Split("\n");
+
+            if (lines.Count() == 0)
+                return default;
+
+            var models = new List<CumulativeModel>();
+
+            var index = 0;
+            foreach (var line in lines)
+            {
+                // Skip the First one as it's the headings
+                if (index != 0)
+                {
+                    var item = line.MapCumulative();
+                    if (item != null)
+                        models.Add(item);
+                }
+
+                index++;
+            }
+
+            return models;
+        }
+
         public static CaseModel MapCase(this string data)
         {
             var items = data.Split(",");

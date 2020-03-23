@@ -11,5 +11,6 @@ namespace Covid19.Interfaces
         Task<CaseModel> GetById(int caseId);
         Task<List<CaseModel>> GetAll();
         Task<List<CaseModel>> GetAllForProvince(string province);
+        Task<List<CumulativeModel>> GetCumulative();
     }
 }

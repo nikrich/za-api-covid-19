@@ -18,6 +18,23 @@ namespace Covid19.Services
             _clientFactory = clientFactory;
         }
 
+        public async Task<List<CumulativeModel>> GetCumulative()
+        {
+            var client = _clientFactory.CreateClient("CovidClient");
+
+            var request = new HttpRequestMessage(HttpMethod.Get,
+            "dsfsi/covid19za/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv");
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Invalid Response from data endpoint for Cases");
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            return result.MapCumulativeList();
+        }
+
         public async Task<List<CaseModel>> GetAll()
         {
             var client = _clientFactory.CreateClient("CovidClient");

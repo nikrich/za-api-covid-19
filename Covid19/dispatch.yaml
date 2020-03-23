@@ -1,3 +1,3 @@
 dispatch:
   - url: covidvisual.com/*
-    service: memesauce-io
+    service: default

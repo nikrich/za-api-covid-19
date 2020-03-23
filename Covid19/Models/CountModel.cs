@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Covid19.Models
 {
-    public class CaseCountModel
+    public class CountModel
     {
-        public int CasesTotal { get; set; }
+        public double CasesTotal { get; set; }
         public DateTime Date { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Covid19.Interfaces;
 using Covid19.Models;
+using Covid19.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,7 @@ namespace Covid19.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
+    [ResponseCache(Duration = 1800, Location = ResponseCacheLocation.Any)]
     public class CasesController : ControllerBase
     {
         private readonly ICasesService _casesService;
@@ -29,7 +30,7 @@ namespace Covid19.Controllers
         {
             List<CaseModel> result = new List<CaseModel>();
 
-            if(string.IsNullOrWhiteSpace(province)) 
+            if (string.IsNullOrWhiteSpace(province))
                 result = await _casesService.GetAll();
             else
                 result = await _casesService.GetAllForProvince(province);
@@ -39,7 +40,7 @@ namespace Covid19.Controllers
 
         [HttpGet]
         [Route("getallperday")]
-        public async Task<ActionResult<List<CaseCountModel>>> GetAllPerDay([FromQuery]string province)
+        public async Task<ActionResult<List<CountModel>>> GetAllPerDay([FromQuery]string province)
         {
             List<CaseModel> result = new List<CaseModel>();
 
@@ -49,13 +50,25 @@ namespace Covid19.Controllers
                 result = await _casesService.GetAllForProvince(province);
 
             var groupedResult = result.GroupBy(x => x.Date)
-                .Select(x => new CaseCountModel
+                .Select(x => new CountModel
                 {
                     CasesTotal = x.Count(),
                     Date = x.Key
                 });
 
             return Ok(groupedResult);
+        }
+
+        [HttpGet]
+        [Route("getdayaggregate")]
+        public async Task<ActionResult<List<CountModel>>> GetAllPerDayAggregate([FromQuery]string province)
+        {
+            var result = await _casesService.GetCumulative();
+
+            if (string.IsNullOrWhiteSpace(province))
+                return Ok(CumulativeUtility.GetCumulative(result));
+            else
+                return Ok(CumulativeUtility.GetCumulativeForProvince(result, province));
         }
 
         [HttpGet]
@@ -68,7 +81,33 @@ namespace Covid19.Controllers
 
         [HttpGet]
         [Route("getcount")]
-        public async Task<ActionResult<CaseCountModel>> GetTotal([FromQuery]string province)
+        public async Task<ActionResult<CountModel>> GetTotal([FromQuery]string province)
+        {
+            var result = await _casesService.GetCumulative();
+
+            if (result == null)
+                return Ok(new CountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
+
+            if (!string.IsNullOrWhiteSpace(province))
+                return Ok(new CountModel
+                {
+                    CasesTotal = CumulativeUtility.GetTotalForProvince(result, province),
+                    Date = DateTime.Now
+                });
+            else
+                return Ok(new CountModel
+                {
+                    CasesTotal = CumulativeUtility.GetTotal(result),
+                    Date = result.Last().Date
+                });
+
+
+
+        }
+
+        [HttpGet]
+        [Route("getavgage")]
+        public async Task<ActionResult<AvgAgeModel>> GetAvgAge([FromQuery]string province)
         {
             List<CaseModel> result = new List<CaseModel>();
 
@@ -76,12 +115,11 @@ namespace Covid19.Controllers
                 result = await _casesService.GetAll();
             else
                 result = await _casesService.GetAllForProvince(province);
-           
 
             if (result == null)
-                return Ok(new CaseCountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
+                return Ok(new AvgAgeModel { Age = Int32.MinValue, Date = DateTime.Now });
 
-            return Ok(new CaseCountModel { CasesTotal = result.Count, Date = DateTime.Now });
+            return Ok(new AvgAgeModel { Age = Math.Round(result.Average(x => x.Age)), Date = DateTime.Now });
         }
     }
 }
