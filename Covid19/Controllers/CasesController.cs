@@ -12,7 +12,7 @@ namespace Covid19.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ResponseCache(Duration = 1800, Location = ResponseCacheLocation.Any)]
+    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
     public class CasesController : ControllerBase
     {
         private readonly ICasesService _casesService;
