@@ -110,7 +110,7 @@ namespace Covid19.Extenstions
         {
             var items = data.Split(",");
 
-            if (items.Count() < 8)
+            if (items.Count() < 3)
                 return default;
 
             return new DeathsModel

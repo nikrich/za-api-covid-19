@@ -11,7 +11,6 @@ namespace Covid19.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
     public class DeathsController : ControllerBase
     {
         private readonly IDeathsService _deathsService;
@@ -27,8 +26,15 @@ namespace Covid19.Controllers
         [Route("getall")]
         public async Task<ActionResult<List<DeathsModel>>> GetAll()
         {
-            var result = await _deathsService.GetAll();
-            return Ok(result);
+            try
+            {
+                var result = await _deathsService.GetAll();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
@@ -43,12 +49,20 @@ namespace Covid19.Controllers
         [Route("getcount")]
         public async Task<ActionResult<DeathsModel>> GetTotal()
         {
-            var result = await _deathsService.GetAll();
+            try
+            {
+                var result = await _deathsService.GetAll();
 
-            if (result == null)
-                return Ok(new CountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
+                if (result == null)
+                    return Ok(new CountModel { CasesTotal = Int32.MinValue, Date = DateTime.Now });
 
-            return Ok(new CountModel { CasesTotal = result.Count, Date = DateTime.Now });
+                return Ok(new CountModel { CasesTotal = result.Count, Date = DateTime.Now });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }
