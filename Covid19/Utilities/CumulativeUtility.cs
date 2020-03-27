@@ -16,15 +16,23 @@ namespace Covid19.Utilities
             if (final == null)
                 return Int32.MinValue;
 
-            return final.EasternCape +
-                final.FreeState +
-                final.Gauteng +
-                final.KwazuluNatal +
-                final.Limpopo +
-                final.Mpumalanga +
-                final.NorthernCape +
-                final.NorthWest +
-                final.WesternCape;
+            return GetCountTotal(final);
+        }
+
+        public static CountModel GetLatest(List<CumulativeModel> model)
+        {
+            var total = GetTotal(model);
+            var latestDate = model.Last().Date;
+            // Reverse list to get snd last
+            model.Reverse();
+            var sndLast = model.Skip(1).Take(1).FirstOrDefault();
+            var sndLastTotal = GetCountTotal(sndLast);
+
+            return new CountModel { 
+                CasesTotal = total - sndLastTotal,
+                Date = latestDate
+            };
+
         }
 
         public static int GetTotalForProvince(List<CumulativeModel> model, string province)
@@ -45,6 +53,7 @@ namespace Covid19.Utilities
                 case Constants.NorthernCape: return final.EasternCape;
                 case Constants.NorthWest: return final.NorthernCape;
                 case Constants.WesternCape: return final.WesternCape;
+                case Constants.Unknown: return final.Unknown;
                 default: return Int32.MinValue;
             }            
         }
@@ -87,6 +96,7 @@ namespace Covid19.Utilities
                 case Constants.NorthernCape: return model.EasternCape;
                 case Constants.NorthWest: return model.NorthernCape;
                 case Constants.WesternCape: return model.WesternCape;
+                case Constants.Unknown: return model.Unknown;
                 default: return Int32.MinValue;
             }
         }
@@ -101,7 +111,8 @@ namespace Covid19.Utilities
                 model.Mpumalanga +
                 model.NorthernCape +
                 model.NorthWest +
-                model.WesternCape;
+                model.WesternCape +
+                model.Unknown;
         }
     }
 }

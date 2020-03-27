@@ -16,5 +16,6 @@ namespace Covid19.Contants
         public const string NorthernCape = "NC";
         public const string NorthWest = "NW";
         public const string WesternCape = "WC";
+        public const string Unknown = "UNKNOWN";        
     }
 }

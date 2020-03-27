@@ -23,7 +23,7 @@ namespace Covid19.Services
             var client = _clientFactory.CreateClient("CovidClient");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-            "dsfsi/covid19za/master/data/health_system_za_private_hospitals.csv");
+            "nikrich/covid19za/master/data/health_system_za_private_hospitals.csv");
 
             var response = await client.SendAsync(request);
 

@@ -13,7 +13,7 @@ namespace Covid19.Extenstions
         {
             var items = data.Split(",");
 
-            if (items.Count() < 10)
+            if (items.Count() < 11)
                 return default;
 
             return new CumulativeModel
@@ -28,7 +28,8 @@ namespace Covid19.Extenstions
                 Mpumalanga = int.TryParse(items[7], out int mp) ? mp : 0,
                 NorthernCape = int.TryParse(items[8], out int nc) ? nc : 0,
                 NorthWest = int.TryParse(items[9], out int nw) ? nw : 0,
-                WesternCape = int.TryParse(items[10], out int wc) ? wc : 0
+                WesternCape = int.TryParse(items[10], out int wc) ? wc : 0,
+                Unknown = int.TryParse(items[11], out int u) ? u : 0
             };
         }
 
@@ -158,9 +159,11 @@ namespace Covid19.Extenstions
                 Date = DateTime.ParseExact(items[0], "dd-MM-yyyy", CultureInfo.InvariantCulture),
                 DatePlain = items[1],
                 CmulativeTests = int.TryParse(items[2], out int c) ? c : 0,
-                ScannedTravellers = int.TryParse(items[3], out int s) ? s : 0,
-                PassengersElevatedTemperature = int.TryParse(items[4], out int p) ? p : 0,
-                CovidSuspectedCriteria = int.TryParse(items[5], out int co) ? co : 0,
+                Recovered = int.TryParse(items[3], out int r) ? r : 0,
+                Deaths = int.TryParse(items[4], out int d) ? d : 0,
+                ScannedTravellers = int.TryParse(items[5], out int s) ? s : 0,
+                PassengersElevatedTemperature = int.TryParse(items[6], out int p) ? p : 0,
+                CovidSuspectedCriteria = int.TryParse(items[7], out int co) ? co : 0,
             };
         }
 

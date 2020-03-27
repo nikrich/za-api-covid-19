@@ -30,5 +30,23 @@ namespace Covid19.Controllers
             var result = await _testsService.GetAll();
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("getrecovered")]
+        public async Task<ActionResult<CountModel>> GetRecovered()
+        {
+            var result = await _testsService.GetAll();
+
+            if (result?.Count == 0)
+                return NotFound();
+
+            var latestTests = result.Last();
+
+            return Ok(new CountModel
+            {
+                CasesTotal = latestTests.Recovered,
+                Date = latestTests.Date
+            });
+        }
     }
 }

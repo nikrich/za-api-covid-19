@@ -23,7 +23,7 @@ namespace Covid19.Services
             var client = _clientFactory.CreateClient("CovidClient");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-            "dsfsi/covid19za/master/data/covid19za_timeline_deaths.csv");
+            "nikrich/covid19za/master/data/covid19za_timeline_deaths.csv");
 
             var response = await client.SendAsync(request);
 

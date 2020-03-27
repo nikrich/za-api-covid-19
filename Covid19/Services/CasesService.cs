@@ -23,7 +23,7 @@ namespace Covid19.Services
             var client = _clientFactory.CreateClient("CovidClient");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-            "dsfsi/covid19za/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv");
+            "nikrich/covid19za/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv");
 
             var response = await client.SendAsync(request);
 
@@ -40,7 +40,7 @@ namespace Covid19.Services
             var client = _clientFactory.CreateClient("CovidClient");
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-            "dsfsi/covid19za/master/data/covid19za_timeline_confirmed.csv");
+            "nikrich/covid19za/master/data/covid19za_timeline_confirmed.csv");
 
             var response = await client.SendAsync(request);
 

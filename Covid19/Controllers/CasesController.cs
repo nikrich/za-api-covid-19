@@ -119,7 +119,19 @@ namespace Covid19.Controllers
             if (result == null)
                 return Ok(new AvgAgeModel { Age = Int32.MinValue, Date = DateTime.Now });
 
-            return Ok(new AvgAgeModel { Age = Math.Round(result.Average(x => x.Age)), Date = DateTime.Now });
+            return Ok(new AvgAgeModel { Age = Math.Round(result.Where(x => x.Age != 0).Average(x => x.Age)), Date = DateTime.Now });
+        }
+
+        [HttpGet]
+        [Route("getlatestupdate")]
+        public async Task<ActionResult<CountModel>> GetLatestUpdate()
+        {
+            var result = await _casesService.GetCumulative();
+
+            if (result == null)
+                return Ok(new CountModel());
+
+            return CumulativeUtility.GetLatest(result);           
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Covid19.Models
         public int NorthernCape { get; set; }
         public int NorthWest { get; set; }
         public int WesternCape { get; set; }
+        public int Unknown { get; set; }
     }
 }
